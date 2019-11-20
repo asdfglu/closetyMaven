@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,7 @@ public class UserFollowsDao {
 	}
 
 	/* INSERT WITH ID */
-	@SuppressWarnings("resource")
-	public void insert(long id_user, long id_follows) {
+	public UserFollows insert(long id_user, long id_follows) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -28,13 +28,20 @@ public class UserFollowsDao {
 				throw new DbException("Error: already following user.");
 			}
 
-			st = conn.prepareStatement("INSERT INTO userfollows (id_user, id_follows) VALUES (?,?)");
+			st = conn.prepareStatement("INSERT INTO userfollows (id_user, id_follows) VALUES (?,?)",
+					Statement.RETURN_GENERATED_KEYS);
 
 			st.setLong(1, id_user);
 			st.setLong(2, id_follows);
 
-			st.executeUpdate();
+			rs = st.getGeneratedKeys();
 
+			UserFollows userFollows = new UserFollows();
+
+			if (rs.next()) {
+				userFollows = instantiateUserFollows(rs);
+			}
+			return userFollows;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
@@ -44,9 +51,7 @@ public class UserFollowsDao {
 	}
 
 	/* INSERT WITH OBJECT */
-	@SuppressWarnings("resource")
-	/* INSERT WITH OBJECT */
-	public void insert(UserFollows obj) {
+	public UserFollows insert(UserFollows obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -55,13 +60,22 @@ public class UserFollowsDao {
 				throw new DbException("Error: already following user.");
 			}
 
-			st = conn.prepareStatement("INSERT INTO userfollows (id_user, id_follows) VALUES (?,?)");
+			st = conn.prepareStatement("INSERT INTO userfollows (id_user, id_follows) VALUES (?,?)",
+					Statement.RETURN_GENERATED_KEYS);
 
 			st.setLong(1, obj.getId_user());
 			st.setLong(2, obj.getId_follows());
 
 			st.executeUpdate();
 
+			rs = st.getGeneratedKeys();
+
+			UserFollows userFollows = new UserFollows();
+
+			if (rs.next()) {
+				userFollows = instantiateUserFollows(rs);
+			}
+			return userFollows;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
@@ -132,27 +146,6 @@ public class UserFollowsDao {
 		}
 	}
 
-	public boolean doesItFollow(long id_user, long id_follows) {
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			st = conn.prepareStatement("SELECT * FROM userfollows WHERE id_user = ?");
-			st.setLong(1, id_user);
-			rs = st.executeQuery();
-			while (rs.next()) {
-				if (rs.getInt("id_follows") == id_follows) {
-					return true;
-				}
-			}
-			return false;
-		} catch (SQLException e) {
-			throw new DbException("Error: " + e.getMessage());
-		} finally {
-			DB.closeResultSet(rs);
-			DB.closeStatement(st);
-		}
-	}
-
 	/* ------------------------ USELESS ------------------------ */
 	/* FIND ALL BY OBJECT */
 	public List<UserFollows> findAllFollows(UserFollows obj) {
@@ -179,11 +172,33 @@ public class UserFollowsDao {
 			DB.closeStatement(st);
 		}
 	}
-	
+
 	public UserFollows instantiateUserFollows(ResultSet rs) throws SQLException {
 		UserFollows userFollows = new UserFollows();
 		userFollows.setId_user(rs.getLong("id_user"));
 		userFollows.setId_follows(rs.getLong("id_follows"));
 		return userFollows;
 	}
+
+	public boolean doesItFollow(long id_user, long id_follows) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM userfollows WHERE id_user = ?");
+			st.setLong(1, id_user);
+			rs = st.executeQuery();
+			while (rs.next()) {
+				if (rs.getInt("id_follows") == id_follows) {
+					return true;
+				}
+			}
+			return false;
+		} catch (SQLException e) {
+			throw new DbException("Error: " + e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+
 }

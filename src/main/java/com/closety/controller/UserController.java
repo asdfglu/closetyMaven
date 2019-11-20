@@ -14,63 +14,63 @@ import com.closety.model.User;
 import com.closety.persistencia.DB;
 import com.closety.persistencia.UserDao;
 
-@Controller    
-@RequestMapping(path="/user/") 
+@Controller
+@RequestMapping(path = "/user/")
 public class UserController {
 
 	private UserDao userDao;
-	
+
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public ResponseEntity<User> cadastrarUser(@RequestBody User user) {
+	public ResponseEntity<User> insert(@RequestBody User user) {
 		userDao = new UserDao(DB.getConnection());
-		System.out.println("NOME: "+user.getUsername());
+		System.out.println("NOME: " + user.getUsername());
 		user = userDao.insert(user);
 		return new ResponseEntity<User>(user, HttpStatus.CREATED);
 	}
-	
+
 	@RequestMapping(value = "", method = RequestMethod.PUT)
-	public ResponseEntity<Void> editarUser(@RequestBody User user) {
+	public ResponseEntity<Void> update(@RequestBody User user) {
 		userDao = new UserDao(DB.getConnection());
 		userDao.update(user);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> excluirUser(@PathVariable long id) {
+	public ResponseEntity<Void> deleteById(@PathVariable Long id) {
 		userDao = new UserDao(DB.getConnection());
 		userDao.deleteById(id);
 		return new ResponseEntity<Void>(HttpStatus.OK);
-	}	
-	
+	}
+
 	@RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<User>> findAll() {
+	public ResponseEntity<List<User>> findAll() {
 		userDao = new UserDao(DB.getConnection());
-		List<User> listaUsers = userDao.findAll();		
+		List<User> listaUsers = userDao.findAll();
 		return new ResponseEntity<List<User>>(listaUsers, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	public ResponseEntity<User> findById(@PathVariable long id) {
 		userDao = new UserDao(DB.getConnection());
 		User user = userDao.findById(id);
-		if(user!=null) {
+		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.OK);
-		}else{		
+		} else {
 			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 		}
 	}
-	
+
 	@RequestMapping(value = "{username}/{password}", method = RequestMethod.GET)
-	public ResponseEntity<User> findByLogin(@PathVariable("username") String username, @PathVariable("password") String password) {
-		System.out.println("LOGIN: "+username+" SENHA: "+password);
+	public ResponseEntity<User> findByLogin(@PathVariable("username") String username,
+			@PathVariable("password") String password) {
+		System.out.println("USERNAME: " + username + " SENHA: " + password);
 		userDao = new UserDao(DB.getConnection());
 		User user = userDao.findByLogin(username, password);
-		if(user!=null) {
+		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.OK);
-		}else{
+		} else {
 			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 
 		}
 	}
 }
-

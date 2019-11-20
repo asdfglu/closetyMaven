@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,8 @@ public class UserDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"INSERT INTO user " + "(username, password, description, whatsapp) " + "VALUES " + "(?,?,?,?)");
+					"INSERT INTO user " + "(username, password, description, whatsapp) " + "VALUES " + "(?,?,?,?)", 
+					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getUsername());
 			st.setString(2, obj.getPassword());
@@ -33,17 +35,17 @@ public class UserDao {
 			st.executeUpdate();
 
 			rs = st.getGeneratedKeys();
-
+			
 			if (rs.next()) {
 				obj.setId(rs.getLong(1));
 			}
+			return obj;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
 			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 		}
-		return obj;
 	}
 
 	/* UPDATE USER */
@@ -69,7 +71,7 @@ public class UserDao {
 	}
 
 	/* DELETE USER BY ID */
-	public void deleteById(long id) {
+	public void deleteById(Long id) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement("DELETE FROM user WHERE iduser = ?");
