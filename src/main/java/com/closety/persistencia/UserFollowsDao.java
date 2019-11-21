@@ -166,7 +166,6 @@ public class UserFollowsDao {
 		}
 	}
 	
-	/* ! */
 	public boolean doesItFollow(UserFollows userFollows) {
 		PreparedStatement st = null;
 		ResultSet rs = null;

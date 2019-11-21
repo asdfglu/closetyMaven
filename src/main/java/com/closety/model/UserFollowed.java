@@ -60,6 +60,6 @@ public class UserFollowed implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserFollowed: User = " + id_user + " FOLLOWED User = " + id_followed;
+		return "UserFollowed: User = " + id_user + " IS FOLLOWED BY User = " + id_followed;
 	}
 }

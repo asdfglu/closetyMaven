@@ -17,8 +17,7 @@ public class UserFollowedDao {
 		this.conn = conn;
 	}
 
-	/* INSERT WITH ID */
-	public void insert(long id_user, long id_followed) {
+	public UserFollowed insert(long id_user, long id_followed) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -34,6 +33,9 @@ public class UserFollowedDao {
 
 			st.executeUpdate();
 
+			UserFollowed userFollowed = new UserFollowed(id_user, id_followed);
+
+			return userFollowed;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
@@ -42,8 +44,7 @@ public class UserFollowedDao {
 		}
 	}
 
-	/* INSERT WITH OBJECT */
-	public void insert(UserFollowed obj) {
+	public UserFollowed insert(UserFollowed obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -59,6 +60,7 @@ public class UserFollowedDao {
 
 			st.executeUpdate();
 
+			return obj;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
@@ -67,7 +69,6 @@ public class UserFollowedDao {
 		}
 	}
 
-	/* DELETE BY ID */
 	public void deleteById(long id_user, long id_followed) {
 		PreparedStatement st = null;
 		try {
@@ -85,7 +86,6 @@ public class UserFollowedDao {
 		}
 	}
 
-	/* DELETE BY OBJECT */
 	public void deleteById(UserFollowed obj) {
 		PreparedStatement st = null;
 		try {
@@ -102,9 +102,24 @@ public class UserFollowedDao {
 			DB.closeStatement(st);
 		}
 	}
-	
-	/* FIND ALL BY ID */
-	public List<Long> findAllFollowed(long id_user) {
+
+	public void deleteAllById(long id) {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM userfollowed WHERE id_user = ?");
+
+			st.setLong(1, id);
+
+			st.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new DbException("Error: " + e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
+	}
+
+	public List<UserFollowed> findAllFollowed(long id_user) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -114,11 +129,11 @@ public class UserFollowedDao {
 
 			rs = st.executeQuery();
 
-			List<Long> list = new ArrayList<>();
+			List<UserFollowed> list = new ArrayList<>();
 
 			while (rs.next()) {
-				Long id = rs.getLong("id_followed");
-				list.add(id);
+				UserFollowed obj = instantiateUserFollowed(rs);
+				list.add(obj);
 			}
 			return list;
 		} catch (SQLException e) {
@@ -129,7 +144,6 @@ public class UserFollowedDao {
 		}
 	}
 
-
 	public boolean isItFollowed(long id_user, long id_followed) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -139,6 +153,27 @@ public class UserFollowedDao {
 			rs = st.executeQuery();
 			while (rs.next()) {
 				if (rs.getInt("id_followed") == id_followed) {
+					return true;
+				}
+			}
+			return false;
+		} catch (SQLException e) {
+			throw new DbException("Error: " + e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+
+	public boolean isItFollowed(UserFollowed userFollowed) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM userfollowed WHERE id_user = ?");
+			st.setLong(1, userFollowed.getId_user());
+			rs = st.executeQuery();
+			while (rs.next()) {
+				if (rs.getInt("id_followed") == userFollowed.getId_followed()) {
 					return true;
 				}
 			}
