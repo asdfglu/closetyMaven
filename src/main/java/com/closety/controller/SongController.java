@@ -9,14 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.closety.model.Song;
-import com.closety.persistencia.DB;
 import com.closety.persistencia.SongDao;
 
 @Controller
 @RequestMapping(path = "/song/")
 public class SongController {
 
-	private SongDao songDao = new SongDao(DB.getConnection());
+	private SongDao songDao = new SongDao();
 	
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<Song> insert(@RequestBody Song song) {

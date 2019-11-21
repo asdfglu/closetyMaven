@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.closety.model.UserFollows;
-import com.closety.persistencia.DB;
 import com.closety.persistencia.UserFollowsDao;
 
 @Controller
 @RequestMapping(path = "/userfollows/")
 public class UserFollowsController {
 
-	private UserFollowsDao userFollowsDao = new UserFollowsDao(DB.getConnection());
+	private UserFollowsDao userFollowsDao = new UserFollowsDao();
 
 	@RequestMapping(value = "{id_user}/{id_follows}", method = RequestMethod.POST)
 	public ResponseEntity<UserFollows> insert(@PathVariable("id_user") long id_user,

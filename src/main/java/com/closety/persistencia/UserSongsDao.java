@@ -14,8 +14,8 @@ public class UserSongsDao {
 
 	private Connection conn;
 
-	public UserSongsDao(Connection conn) {
-		this.conn = conn;
+	public UserSongsDao() {
+		conn = DB.getConnection();
 	}
 
 	public UserSongs insert(long id_user, long id_song) {
@@ -185,7 +185,7 @@ public class UserSongsDao {
 	}
 
 	public Song instantiateSong(long idsong) throws SQLException {
-		SongDao songDao = new SongDao(conn);
+		SongDao songDao = new SongDao();
 		Song song = songDao.findById(idsong);
 		return song;
 	}

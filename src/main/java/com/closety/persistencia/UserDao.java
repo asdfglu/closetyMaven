@@ -14,16 +14,15 @@ public class UserDao {
 
 	private Connection conn;
 
-	public UserDao(Connection conn) {
-		this.conn = conn;
+	public UserDao() {
+		conn = DB.getConnection();
 	}
 
 	public User insert(User obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement(
-					"INSERT INTO user (username, password, description, whatsapp) VALUES (?,?,?,?)", 
+			st = conn.prepareStatement("INSERT INTO user (username, password, description, whatsapp) VALUES (?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getUsername());
@@ -34,7 +33,7 @@ public class UserDao {
 			st.executeUpdate();
 
 			rs = st.getGeneratedKeys();
-			
+
 			if (rs.next()) {
 				obj.setId(rs.getLong(1));
 			}
@@ -67,7 +66,7 @@ public class UserDao {
 			DB.closeStatement(st);
 		}
 	}
-	
+
 	public void deleteById(Long id) {
 		PreparedStatement st = null;
 		try {

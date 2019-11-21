@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.closety.model.User;
-import com.closety.persistencia.DB;
 import com.closety.persistencia.UserDao;
 
 @Controller
 @RequestMapping(path = "/user/")
 public class UserController {
 
-	private UserDao userDao = new UserDao(DB.getConnection());
+	private UserDao userDao = new UserDao();
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<User> insert(@RequestBody User user) {

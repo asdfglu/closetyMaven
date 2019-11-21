@@ -13,8 +13,8 @@ public class UserFollowsDao {
 
 	private Connection conn;
 
-	public UserFollowsDao(Connection conn) {
-		this.conn = conn;
+	public UserFollowsDao() {
+		conn = DB.getConnection();
 	}
 
 	public UserFollows insert(long id_user, long id_follows) {
@@ -164,7 +164,7 @@ public class UserFollowsDao {
 			DB.closeStatement(st);
 		}
 	}
-	
+
 	public boolean doesItFollow(UserFollows userFollows) {
 		PreparedStatement st = null;
 		ResultSet rs = null;

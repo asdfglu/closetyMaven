@@ -13,8 +13,8 @@ public class UserFollowedDao {
 
 	private Connection conn;
 
-	public UserFollowedDao(Connection conn) {
-		this.conn = conn;
+	public UserFollowedDao() {
+		conn = DB.getConnection();
 	}
 
 	public UserFollowed insert(long id_user, long id_followed) {

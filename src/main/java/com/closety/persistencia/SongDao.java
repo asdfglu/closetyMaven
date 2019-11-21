@@ -12,8 +12,8 @@ public class SongDao {
 
 	private Connection conn;
 
-	public SongDao(Connection conn) {
-		this.conn = conn;
+	public SongDao() {
+		conn = DB.getConnection();
 	}
 
 	public Song insert(Song obj) {
@@ -23,11 +23,11 @@ public class SongDao {
 			st = conn.prepareStatement("INSERT INTO song (idspotify) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getIdSpotify());
-			
+
 			st.executeUpdate();
-			
+
 			rs = st.getGeneratedKeys();
-			
+
 			if (rs.next()) {
 				obj.setId(rs.getLong(1));
 			}
@@ -96,7 +96,7 @@ public class SongDao {
 		}
 
 	}
-	
+
 	public Song instantiateSong(ResultSet rs) throws SQLException {
 		Song song = new Song();
 		song.setId(rs.getLong("idsong"));
