@@ -18,7 +18,6 @@ public class UserDao {
 		this.conn = conn;
 	}
 
-	/* INSERT USER */
 	public User insert(User obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -48,7 +47,6 @@ public class UserDao {
 		}
 	}
 
-	/* UPDATE USER */
 	public void update(User obj) {
 		PreparedStatement st = null;
 		try {
@@ -69,8 +67,7 @@ public class UserDao {
 			DB.closeStatement(st);
 		}
 	}
-
-	/* DELETE USER BY ID */
+	
 	public void deleteById(Long id) {
 		PreparedStatement st = null;
 		try {
@@ -87,7 +84,6 @@ public class UserDao {
 		}
 	}
 
-	/* FIND USER BY ID */
 	public User findById(long id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -111,7 +107,6 @@ public class UserDao {
 		}
 	}
 
-	/* FIND ALL USERS */
 	public List<User> findAll() {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -136,7 +131,6 @@ public class UserDao {
 		}
 	}
 
-	/* LOGIN */
 	public User findByLogin(String username, String password) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -161,7 +155,6 @@ public class UserDao {
 		}
 	}
 
-	/* INSTANTIATE USER WITH RESULTSET */
 	public User instantiateUser(ResultSet rs) throws SQLException {
 		User user = new User();
 		user.setId(rs.getLong("iduser"));

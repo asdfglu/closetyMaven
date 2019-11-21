@@ -18,7 +18,6 @@ public class UserFollowedDao {
 	}
 
 	/* INSERT WITH ID */
-	@SuppressWarnings("resource")
 	public void insert(long id_user, long id_followed) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -44,7 +43,6 @@ public class UserFollowedDao {
 	}
 
 	/* INSERT WITH OBJECT */
-	@SuppressWarnings("resource")
 	public void insert(UserFollowed obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;

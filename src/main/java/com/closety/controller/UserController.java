@@ -18,40 +18,34 @@ import com.closety.persistencia.UserDao;
 @RequestMapping(path = "/user/")
 public class UserController {
 
-	private UserDao userDao;
+	private UserDao userDao = new UserDao(DB.getConnection());
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<User> insert(@RequestBody User user) {
-		userDao = new UserDao(DB.getConnection());
-		System.out.println("NOME: " + user.getUsername());
 		user = userDao.insert(user);
 		return new ResponseEntity<User>(user, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.PUT)
 	public ResponseEntity<Void> update(@RequestBody User user) {
-		userDao = new UserDao(DB.getConnection());
 		userDao.update(user);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-		userDao = new UserDao(DB.getConnection());
 		userDao.deleteById(id);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<List<User>> findAll() {
-		userDao = new UserDao(DB.getConnection());
-		List<User> listaUsers = userDao.findAll();
-		return new ResponseEntity<List<User>>(listaUsers, HttpStatus.OK);
+		List<User> list = userDao.findAll();
+		return new ResponseEntity<List<User>>(list, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
-	public ResponseEntity<User> findById(@PathVariable long id) {
-		userDao = new UserDao(DB.getConnection());
+	public ResponseEntity<User> findById(@PathVariable Long id) {
 		User user = userDao.findById(id);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.OK);
@@ -63,8 +57,6 @@ public class UserController {
 	@RequestMapping(value = "{username}/{password}", method = RequestMethod.GET)
 	public ResponseEntity<User> findByLogin(@PathVariable("username") String username,
 			@PathVariable("password") String password) {
-		System.out.println("USERNAME: " + username + " SENHA: " + password);
-		userDao = new UserDao(DB.getConnection());
 		User user = userDao.findByLogin(username, password);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.OK);
