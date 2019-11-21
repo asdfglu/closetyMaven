@@ -17,7 +17,6 @@ public class UserFollowsDao {
 		this.conn = conn;
 	}
 
-	/* INSERT WITH ID */
 	public UserFollows insert(long id_user, long id_follows) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -33,7 +32,7 @@ public class UserFollowsDao {
 			st.setLong(2, id_follows);
 
 			st.executeUpdate();
-			
+
 			UserFollows userFollows = new UserFollows(id_user, id_follows);
 
 			return userFollows;
@@ -45,7 +44,6 @@ public class UserFollowsDao {
 		}
 	}
 
-	/* INSERT WITH OBJECT */
 	public UserFollows insert(UserFollows obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -71,7 +69,6 @@ public class UserFollowsDao {
 		}
 	}
 
-	/* DELETE BY ID */
 	public void deleteById(long id_user, long id_follows) {
 		PreparedStatement st = null;
 		try {
@@ -97,6 +94,22 @@ public class UserFollowsDao {
 
 			st.setLong(1, obj.getId_user());
 			st.setLong(2, obj.getId_follows());
+
+			st.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new DbException("Error: " + e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
+	}
+
+	public void deleteAllById(long id_user) {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM userfollows WHERE id_user = ?");
+
+			st.setLong(1, id_user);
 
 			st.executeUpdate();
 

@@ -30,4 +30,17 @@ public class UserFollowsController {
 		userFollows = userFollowsDao.insert(userFollows);
 		return new ResponseEntity<UserFollows>(userFollows, HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value = "{id_user}/{id_follows}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteById(@PathVariable("id_user") long id_user,
+			@PathVariable("id_follows") long id_follows) {
+		userFollowsDao.deleteById(id_user, id_follows);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteById(@RequestBody UserFollows userFollows) {
+		userFollowsDao.deleteById(userFollows);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 }
