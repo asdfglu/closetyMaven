@@ -4,8 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Statement;
 
 import com.closety.model.Song;
 
@@ -17,35 +16,37 @@ public class SongDao {
 		this.conn = conn;
 	}
 
-	/* INSERT SONG */
-	public void insert(Song obj) {
+	public Song insert(Song obj) {
 		PreparedStatement st = null;
+		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO song (name, album, artist) VALUES (?,?,?)");
+			st = conn.prepareStatement("INSERT INTO song (idspotify) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
 
-			st.setString(1, obj.getName());
-			st.setString(2, obj.getAlbum());
-			st.setString(3, obj.getArtist());
-
+			st.setString(1, obj.getIdSpotify());
+			
 			st.executeUpdate();
-
+			
+			rs = st.getGeneratedKeys();
+			
+			if (rs.next()) {
+				obj.setId(rs.getLong(1));
+			}
+			return obj;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
+			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 		}
 	}
 
-	/* UPDATE SONG */
 	public void update(Song obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE song SET name = ?, album = ?, artist = ? WHERE idsong = ?");
+			st = conn.prepareStatement("UPDATE song SET idspotify = ? WHERE idsong = ?");
 
-			st.setString(1, obj.getName());
-			st.setString(2, obj.getAlbum());
-			st.setString(3, obj.getArtist());
-			st.setLong(4, obj.getId());
+			st.setString(1, obj.getIdSpotify());
+			st.setLong(2, obj.getId());
 
 			st.executeUpdate();
 
@@ -56,7 +57,6 @@ public class SongDao {
 		}
 	}
 
-	/* DELETE SONG BY ID */
 	public void deleteById(long id) {
 		PreparedStatement st = null;
 		try {
@@ -73,8 +73,7 @@ public class SongDao {
 		}
 	}
 
-	/* FIND SONG BY ID */
-	public Song findById(long id) {
+	public Song findById(Long id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -97,93 +96,11 @@ public class SongDao {
 		}
 
 	}
-
-	/* FIND SONGS BY ALBUM */
-	public List<Song> findByAlbum(String album) {
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			st = conn.prepareStatement("SELECT * FROM song WHERE album = ?");
-
-			st.setString(1, album);
-
-			rs = st.executeQuery();
-
-			List<Song> list = new ArrayList<>();
-
-			while (rs.next()) {
-				Song song = instantiateSong(rs);
-				list.add(song);
-			}
-			return list;
-		} catch (SQLException e) {
-			throw new DbException("Error: " + e.getMessage());
-		} finally {
-			DB.closeResultSet(rs);
-			DB.closeStatement(st);
-		}
-	}
-
-	/* FIND SONGS BY ARTIST */
-	public List<Song> findByArtist(String artist) {
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			st = conn.prepareStatement("SELECT * FROM song WHERE artist = ?");
-
-			st.setString(1, artist);
-
-			rs = st.executeQuery();
-
-			List<Song> list = new ArrayList<>();
-
-			while (rs.next()) {
-				Song song = instantiateSong(rs);
-				list.add(song);
-			}
-			return list;
-		} catch (SQLException e) {
-			throw new DbException("Error: " + e.getMessage());
-		} finally {
-			DB.closeResultSet(rs);
-			DB.closeStatement(st);
-		}
-	}
-
-	/* FIND SONG BY NAME */
-	public List<Song> findByName(String name) {
-		// Using List because there can be more than one song with the same name.
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			st = conn.prepareStatement("SELECT * FROM song WHERE name = ?");
-
-			st.setString(1, name);
-
-			rs = st.executeQuery();
-
-			List<Song> list = new ArrayList<>();
-
-			while (rs.next()) {
-				Song song = instantiateSong(rs);
-				list.add(song);
-			}
-			return list;
-		} catch (SQLException e) {
-			throw new DbException("Error: " + e.getMessage());
-		} finally {
-			DB.closeResultSet(rs);
-			DB.closeStatement(st);
-		}
-	}
-
-	/* INSTANTIATE SONG WITH RESULTSET */
+	
 	public Song instantiateSong(ResultSet rs) throws SQLException {
 		Song song = new Song();
 		song.setId(rs.getLong("idsong"));
-		song.setName(rs.getString("name"));
-		song.setAlbum(rs.getString("album"));
-		song.setArtist(rs.getString("artist"));
+		song.setIdSpotify(rs.getString("idspotify"));
 		return song;
 	}
 }

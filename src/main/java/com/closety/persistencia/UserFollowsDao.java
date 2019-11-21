@@ -14,7 +14,6 @@ public class UserFollowsDao {
 	private Connection conn;
 
 	public UserFollowsDao(Connection conn) {
-		;
 		this.conn = conn;
 	}
 
@@ -50,7 +49,7 @@ public class UserFollowsDao {
 		ResultSet rs = null;
 		try {
 
-			if (doesItFollow(obj.getId_user(), obj.getId_follows())) {
+			if (doesItFollow(obj)) {
 				throw new DbException("Error: already following user.");
 			}
 
@@ -153,7 +152,7 @@ public class UserFollowsDao {
 			st.setLong(1, id_user);
 			rs = st.executeQuery();
 			while (rs.next()) {
-				if (rs.getInt("id_follows") == id_follows) {
+				if (rs.getLong("id_follows") == id_follows) {
 					return true;
 				}
 			}

@@ -23,7 +23,7 @@ public class UserDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"INSERT INTO user " + "(username, password, description, whatsapp) " + "VALUES " + "(?,?,?,?)", 
+					"INSERT INTO user (username, password, description, whatsapp) VALUES (?,?,?,?)", 
 					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getUsername());

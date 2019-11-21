@@ -18,22 +18,14 @@ public class UserSongsDao {
 		this.conn = conn;
 	}
 
-	/* INSERT WITH IDS */
-	@SuppressWarnings("resource")
-	public void insert(long id_user, long id_song) {
+	public UserSongs insert(long id_user, long id_song) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			/* Very sketchy verification */
-			st = conn.prepareStatement("SELECT * FROM usersongs WHERE id_user = ?");
-			st.setLong(1, id_user);
-			rs = st.executeQuery();
-			while (rs.next()) {
-				if (rs.getInt("id_song") == id_song) {
-					throw new DbException("Error: song already added.");
-				}
+
+			if (doesItListens(id_user, id_song)) {
+				throw new DbException("Error: user already likes song");
 			}
-			/* End of sketchy verification */
 
 			st = conn.prepareStatement("INSERT INTO usersongs (id_user, id_song) VALUES (?,?)");
 
@@ -42,6 +34,9 @@ public class UserSongsDao {
 
 			st.executeUpdate();
 
+			UserSongs userSongs = new UserSongs(id_user, id_song);
+
+			return userSongs;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
@@ -50,22 +45,14 @@ public class UserSongsDao {
 		}
 	}
 
-	/* INSERT WITH OBJECT */
-	@SuppressWarnings("resource")
-	public void insert(UserSongs obj) {
+	public UserSongs insert(UserSongs obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			/* Very sketchy verification */
-			st = conn.prepareStatement("SELECT * FROM usersongs WHERE id_user = ?");
-			st.setLong(1, obj.getId_user());
-			rs = st.executeQuery();
-			while (rs.next()) {
-				if (rs.getInt("id_song") == obj.getId_song()) {
-					throw new DbException("Error: song already added.");
-				}
+
+			if (doesItListens(obj)) {
+				throw new DbException("Error: user already likes song");
 			}
-			/* End of sketchy verification */
 
 			st = conn.prepareStatement("INSERT INTO usersongs (id_user, id_song) VALUES (?,?)");
 
@@ -74,6 +61,7 @@ public class UserSongsDao {
 
 			st.executeUpdate();
 
+			return obj;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {
@@ -82,7 +70,6 @@ public class UserSongsDao {
 		}
 	}
 
-	/* DELETE BY ID */
 	public void deleteById(long id_user, long id_song) {
 		PreparedStatement st = null;
 		try {
@@ -100,7 +87,6 @@ public class UserSongsDao {
 		}
 	}
 
-	/* DELETE BY OBJECT */
 	public void deleteById(UserSongs obj) {
 		PreparedStatement st = null;
 		try {
@@ -118,7 +104,19 @@ public class UserSongsDao {
 		}
 	}
 
-	/* FIND USER SONGS BY ID */
+	public void deleteAllById(long id_user) {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM usersongs WHERE id_user = ?");
+			st.setLong(1, id_user);
+			st.executeUpdate();
+		} catch (SQLException e) {
+			throw new DbException("Error: " + e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
+	}
+
 	public List<Song> findAllSongs(long id_user) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -144,24 +142,40 @@ public class UserSongsDao {
 		}
 	}
 
-	/* FIND USER SONGS BY OBJECT */
-	public List<Song> findAllSongs(UserSongs obj) {
+	public boolean doesItListens(long id_user, long id_song) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement("SELECT * FROM usersongs WHERE id_user = ?");
-
-			st.setLong(1, obj.getId_user());
-
+			st.setLong(1, id_user);
 			rs = st.executeQuery();
-
-			List<Song> list = new ArrayList<>();
-
 			while (rs.next()) {
-				Song song = instantiateSong(rs.getInt("id_song"));
-				list.add(song);
+				if (rs.getLong("id_song") == id_song) {
+					return true;
+				}
 			}
-			return list;
+			return false;
+		} catch (SQLException e) {
+			throw new DbException("Error: " + e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
+
+	public boolean doesItListens(UserSongs userSongs) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM usersongs WHERE id_user = ?");
+			st.setLong(1, userSongs.getId_user());
+			rs = st.executeQuery();
+			while (rs.next()) {
+				if (rs.getLong("id_song") == userSongs.getId_song()) {
+					return true;
+				}
+			}
+			return false;
 		} catch (SQLException e) {
 			throw new DbException("Error: " + e.getMessage());
 		} finally {

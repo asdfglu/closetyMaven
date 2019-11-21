@@ -15,7 +15,7 @@ import com.closety.persistencia.DB;
 import com.closety.persistencia.UserFollowsDao;
 
 @Controller
-@RequestMapping(path = "/userFollows/")
+@RequestMapping(path = "/userfollows/")
 public class UserFollowsController {
 
 	private UserFollowsDao userFollowsDao = new UserFollowsDao(DB.getConnection());
