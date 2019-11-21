@@ -57,4 +57,17 @@ public class UserFollowsController {
 		List<UserFollows> list = userFollowsDao.findAllFollows(id_user);
 		return new ResponseEntity<List<UserFollows>>(list, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "{id_user}/{id_follows}", method = RequestMethod.GET)
+	public ResponseEntity<Boolean> doesItFollow(@PathVariable("id_user") long id_user,
+			@PathVariable("id_follows") long id_follows) {
+		Boolean b = userFollowsDao.doesItFollow(id_user, id_follows);
+		return new ResponseEntity<Boolean>(b, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public ResponseEntity<Boolean> doesItFollow(@RequestBody UserFollows userFollows) {
+		Boolean b = userFollowsDao.doesItFollow(userFollows);
+		return new ResponseEntity<Boolean>(b, HttpStatus.OK);
+	}
 }

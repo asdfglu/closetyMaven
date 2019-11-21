@@ -120,7 +120,6 @@ public class UserFollowsDao {
 		}
 	}
 
-	/* FIND ALL BY ID */
 	public List<UserFollows> findAllFollows(long id_user) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -146,13 +145,6 @@ public class UserFollowsDao {
 		}
 	}
 
-	public UserFollows instantiateUserFollows(ResultSet rs) throws SQLException {
-		UserFollows userFollows = new UserFollows();
-		userFollows.setId_user(rs.getLong("id_user"));
-		userFollows.setId_follows(rs.getLong("id_follows"));
-		return userFollows;
-	}
-
 	public boolean doesItFollow(long id_user, long id_follows) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -173,5 +165,33 @@ public class UserFollowsDao {
 			DB.closeStatement(st);
 		}
 	}
+	
+	/* ! */
+	public boolean doesItFollow(UserFollows userFollows) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM userfollows WHERE id_user = ?");
+			st.setLong(1, userFollows.getId_user());
+			rs = st.executeQuery();
+			while (rs.next()) {
+				if (rs.getInt("id_follows") == userFollows.getId_follows()) {
+					return true;
+				}
+			}
+			return false;
+		} catch (SQLException e) {
+			throw new DbException("Error: " + e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
 
+	public UserFollows instantiateUserFollows(ResultSet rs) throws SQLException {
+		UserFollows userFollows = new UserFollows();
+		userFollows.setId_user(rs.getLong("id_user"));
+		userFollows.setId_follows(rs.getLong("id_follows"));
+		return userFollows;
+	}
 }

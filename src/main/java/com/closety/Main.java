@@ -1,7 +1,5 @@
 package com.closety;
 
-import java.util.List;
-
 import com.closety.model.UserFollows;
 import com.closety.persistencia.DB;
 import com.closety.persistencia.UserFollowsDao;
@@ -11,11 +9,11 @@ public class Main {
 
 		UserFollowsDao userFollowsDao = new UserFollowsDao(DB.getConnection());
 
-		List<UserFollows> list = userFollowsDao.findAllFollows(1);
+		UserFollows userFollows = new UserFollows(1, 3);
+
+		Boolean b = userFollowsDao.doesItFollow(userFollows);
 		
-		for (UserFollows uf : list) {
-			System.out.println(uf);
-		}
-		
+		System.out.println(b);
+
 	}
 }
