@@ -14,6 +14,7 @@ public class UserFollowsDao {
 	private Connection conn;
 
 	public UserFollowsDao(Connection conn) {
+		;
 		this.conn = conn;
 	}
 
@@ -120,7 +121,7 @@ public class UserFollowsDao {
 	}
 
 	/* FIND ALL BY ID */
-	public List<Long> findAllFollows(long id_user) {
+	public List<UserFollows> findAllFollows(long id_user) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -130,11 +131,11 @@ public class UserFollowsDao {
 
 			rs = st.executeQuery();
 
-			List<Long> list = new ArrayList<>();
+			List<UserFollows> list = new ArrayList<>();
 
 			while (rs.next()) {
-				Long id = rs.getLong("id_follows");
-				list.add(id);
+				UserFollows obj = instantiateUserFollows(rs);
+				list.add(obj);
 			}
 			return list;
 		} catch (SQLException e) {
