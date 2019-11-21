@@ -86,7 +86,6 @@ public class UserFollowsDao {
 		}
 	}
 
-	/* DELETE BY OBJECT */
 	public void deleteById(UserFollows obj) {
 		PreparedStatement st = null;
 		try {
@@ -104,12 +103,12 @@ public class UserFollowsDao {
 		}
 	}
 
-	public void deleteAllById(long id_user) {
+	public void deleteAllById(long id) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement("DELETE FROM userfollows WHERE id_user = ?");
 
-			st.setLong(1, id_user);
+			st.setLong(1, id);
 
 			st.executeUpdate();
 

@@ -43,4 +43,10 @@ public class UserFollowsController {
 		userFollowsDao.deleteById(userFollows);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
-}
+	
+	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteAllById(@PathVariable("id") long id){
+		userFollowsDao.deleteAllById(id);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+	}
