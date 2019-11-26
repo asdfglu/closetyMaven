@@ -1,16 +1,13 @@
 package com.closety;
 
-import com.closety.model.User;
-import com.closety.persistencia.UserDao;
+import com.closety.persistencia.UserFollowsDao;
 
 public class Main {
 	public static void main(String[] args) {
 
-		UserDao userDao = new UserDao();
-		
-		User user = new User(null, "jessica", "1234", "já acabou?", "5551286754326");
-		
-		userDao.insert(user);
-		
+		UserFollowsDao ufDao = new UserFollowsDao();
+
+		ufDao.deleteAllById(1);
+
 	}
 }

@@ -23,7 +23,7 @@ public class UserFollowedDao {
 		try {
 
 			if (isItFollowed(id_user, id_followed)) {
-				throw new DbException("Error: already following user.");
+				throw new DbException("Error: already followed by user.");
 			}
 
 			st = conn.prepareStatement("INSERT INTO userfollowed (id_user, id_followed) VALUES (?,?)");
@@ -50,7 +50,7 @@ public class UserFollowedDao {
 		try {
 
 			if (isItFollowed(obj.getId_user(), obj.getId_followed())) {
-				throw new DbException("Error: already following user.");
+				throw new DbException("Error: already followed by user.");
 			}
 
 			st = conn.prepareStatement("INSERT INTO userfollowed (id_user, id_followed) VALUES (?,?)");
